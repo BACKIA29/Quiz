@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz-Questions</title>
+    <link rel="stylesheet" href="quiz.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <div class="box" id="questionscreen">
+      <div class="title">Programming Language Quiz</div>
+      <div class="header">
+        <div class="score">SCORE : <span>0</span></div>
+        <div class="timerBox">TIMER LEFT : <span>03:20</span></div>
+      </div>
+      <div class="question">
+        1.Which of the followingis a statically typed programming language?
+      </div>
+      <div class="options">
+        <span onclick="checkAnswer(this)" data-opt="0"></span>
+        <span onclick="checkAnswer(this)" data-opt="1"></span>
+        <span onclick="checkAnswer(this)" data-opt="2"></span>
+        <span onclick="checkAnswer(this)" data-opt="3"></span>
+      </div>
+      <div class="footer">
+        <button id="nextbutton">Next</button>
+        <button>Solution</button>
+      </div>
+    </div>
+    <script>
+      let index = 0;
+      let score = 0;
+      let wrong = 0;
+
+      let quiz = [
+        {
+          question:
+            " 1.Which of the following is the statically programming language? ",
+          options: [" A)Python", " B)Java", " C)JavaScript", " D)Ruby"],
+          answer: 1,
+        },
+        {
+          question:
+            " 2. Which programming language is primarily used for Android app development?",
+          options: ["A)Swift", "B)C##", "C)Kotlin", "D)PHP"],
+          answer: 2,
+        },
+        {
+          question: "3. What does the 'var' keyword in JavaScript declare?",
+          options: [
+            "A)A constant",
+            "B)A function",
+            "C)A block -scope variable",
+            "D) A global or function-scoped variable",
+          ],
+          answer: 3,
+        },
+        {
+          question:
+            "4. In Python, which of the following data structures is immutable?",
+          options: ["A)List", "B)Set", "C)Dictionary", "D)Tuple"],
+          answer: 3,
+        },
+        {
+          question:
+            "5. Which of the following is a functional programming language?",
+          options: [" A)C", " B)Haskell", " C)Java", " D)Pascal"],
+          answer: 1,
+        },
+        {
+          question: "6. What does the acronym SQL stand for?",
+          options: [
+            "A)Structured Query Language",
+            "B)Sequential Query Language",
+            "C)Structured Question Language",
+            "D)Standard Query Language",
+          ],
+          answer: 0,
+        },
+        {
+          question:
+            "7. In Java, what is the default value of a local variable?",
+          options: [
+            "A)0",
+            "B)null",
+            "C)Undefined",
+            "D)Depends on the data type",
+          ],
+          answer: 2,
+        },
+        {
+          question:
+            "8. Which language is primarily used for data analysis and machine learning?",
+          options: ["A)JavaScript", "B)R", "C)PHP", "D)C++"],
+          answer: 1,
+        },
+        {
+          question:
+            "9. In which programming language is the 'print' function used to display output?",
+          options: ["A)C++", "B)JavaScript", "C)Python", "D)All of the above"],
+          answer: 2,
+        },
+        {
+          question:
+            "10. Which of the following is a logical operator in most programming languages?",
+          options: ["A)&&", "B)##", "C)++", "D)@@"],
+          answer: 0,
+        },
+      ];
+      function checkAnswer(options) {
+        $(".options span").removeClass("right wrong");
+        $(".options span").off("click");
+        let optionClicked = $(options).data("opt");
+        let correctAnswer = quiz[index].answer;
+        if (optionClicked == correctAnswer) {
+          $(options).addClass("right");
+          score++;
+        } else {
+          $(options).addClass("wrong");
+          $(".options span").eq(correctAnswer).addClass("right");
+          wrong++;
+        }
+        $(".score span").text(score);
+      }
+
+      function printQuestion(i) {
+        $(".question").text(quiz[i].question);
+        $(".options span").eq(0).text(quiz[i].options[0]);
+        $(".options span").eq(1).text(quiz[i].options[1]);
+        $(".options span").eq(2).text(quiz[i].options[2]);
+        $(".options span").eq(3).text(quiz[i].options[3]);
+        $(".options span").removeClass("right wrong");
+        $(".options span")
+          .off("click")
+          .on("click", function () {
+            checkAnswer(this);
+          });
+      }
+
+      $(function () {
+        let totaltime = 200;
+        let min = 0;
+        let sec = 0;
+        let counter = 0;
+        let timer = setInterval(function () {
+          counter++;
+          min = Math.floor((totaltime - counter) / 60);
+          sec = (totaltime - counter) % 60;
+
+          $(".timerBox span").text(min + ":" + (sec < 10 ? "0" : "") + sec);
+          if (counter >= totaltime) {
+            clearInterval(timer);
+            console.log("Time's up!");
+            showResults();
+          }
+        }, 1000);
+
+        printQuestion(index);
+
+        $("#nextbutton").click(function () {
+          index++;
+          if (index < quiz.length) {
+            printQuestion(index);
+          } else {
+            showResults();
+          }
+        });
+      });
+      function showResults() {
+        localStorage.setItem("totalQuestions", quiz.length);
+        localStorage.setItem("correctAnswers", score);
+        localStorage.setItem("wrongAnswers", wrong);
+        window.location.href = "quiz_result.html";
+      }
+    </script>
+  </body>
+</html>
